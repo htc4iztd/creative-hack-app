@@ -28,66 +28,58 @@ async def broadcast_vote_update(business_plan_id: int, vote_count: int):
     })
     await manager.broadcast(f"business_plan_{business_plan_id}", message)
 
-@router.post("/{business_plan_id}/apply", response_model=BusinessPlanResponse, status_code=status.HTTP_200_OK)
+@router.post("/business_plans/{business_plan_id}/apply", response_model=BusinessPlanResponse) # 仮の参加希望エンドポイント
 async def apply_to_plan(
     business_plan_id: int,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_active_user)
 ):
     """
-    ユーザーがビジネスプランに参加希望を送信するエンドポイント。
-    ビジネスプランの作成者へ通知を送る。
+    ユーザーがビジネスプランに参加希望を送信するエンドポイント
     """
     business_plan = db.query(BusinessPlan).filter(BusinessPlan.id == business_plan_id).first()
     if not business_plan:
         raise HTTPException(status_code=404, detail="Business plan not found")
 
-    # TODO: 1. ここに、誰がどのプランに参加希望したかのレコードをDBに保存するロジックが入る
-    # 例: class Application(Base): ... app_id, user_id, business_plan_id, status など
-    # db.add(Application(user_id=current_user.id, business_plan_id=business_plan_id))
-    # db.commit()
-    # db.refresh(application)
+    # TODO: ここに実際の「参加希望」をデータベースに保存するロジックを追加
+    # 例: ApplicationModel(user_id=current_user.id, business_plan_id=business_plan_id) を作成し保存
 
-    # 2. 通知レコードをデータベースに保存 (オフラインユーザーへの対応も兼ねる)
+    # 1. 通知をデータベースに保存（オフラインユーザー向け）
     notification_message_text = (
-        f"{current_user.full_name}さんがあなたのビジネスプラン「{business_plan.title}」に参加希望しました。"
+        f"{current_user.full_name}さんがあなたのビジネスプラン「{business_plan.title}」に"
+        f"参加を希望しました。連絡を取ってみましょう！"
     )
     notification = Notification(
-        user_id=business_plan.creator_id, # 通知を受け取るのはプランの投稿ユーザー
+        user_id=business_plan.creator_id, # 通知を受け取るのはプランの投稿者
         title="新しい参加希望",
         message=notification_message_text,
-        notification_type="application", # 通知の種類を識別しやすいように設定
-        related_id=business_plan_id
+        notification_type="application_request", # 通知タイプを明確に
+        related_id=business_plan.id # 関連するビジネスプランのID
     )
     db.add(notification)
     db.commit()
-    db.refresh(notification) # IDなどが取得できるようにリフレッシュ
+    db.refresh(notification) # IDなどを取得するため
 
-    # 3. WebSocket経由でリアルタイム通知を送信 (オンラインユーザーへの対応)
-    # クライアント側で通知を表示するために必要なデータを含める
+    # 2. WebSocket経由でリアルタイム通知を送信（オンラインユーザー向け）
     notification_payload = {
-        "type": "new_application_notification", # クライアント側でこの通知を識別するためのタイプ
-        "id": notification.id,
-        "title": notification.title,
-        "message": notification.message,
-        "is_read": notification.is_read,
-        "created_at": notification.created_at.isoformat(), # datetimeオブジェクトはisoformatで文字列に変換
-        "business_plan_id": business_plan.id,
-        "applicant_id": current_user.id,
-        "applicant_name": current_user.full_name # 応募者の名前
+        "type": "new_notification", # クライアント側で通知を識別する汎用タイプ
+        "notification_data": { # 実際の通知データをネスト
+            "id": notification.id,
+            "title": notification.title,
+            "message": notification.message,
+            "is_read": notification.is_read,
+            "created_at": notification.created_at.isoformat(),
+            "notification_type": notification.notification_type,
+            "related_id": notification.related_id,
+            "applicant_id": current_user.id, # 応募者のIDも送ると便利
+            "applicant_name": current_user.full_name # 応募者の名前も送ると便利
+        }
     }
 
-    # manager.send_notification_to_user を呼び出し、プランの投稿ユーザーのIDに対して通知を送る
+    # プラン投稿者に対して通知を送信
     await manager.send_notification_to_user(business_plan.creator_id, notification_payload)
 
-    return BusinessPlanResponse(
-        id=business_plan.id,
-        title=business_plan.title,
-        description=business_plan.description,
-        # 他の必要なフィールドもここにマッピング
-        # BusinessPlanResponseのスキーマに合わせて適切に設定
-        # 例: creator_id=business_plan.creator_id, is_selected=business_plan.is_selected, etc.
-    )
+    return {"message": "参加希望を送信しました。"} # 適切なレスポンス
 
 @router.post("/", response_model=BusinessPlanResponse)
 def create_business_plan(

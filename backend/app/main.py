@@ -26,35 +26,32 @@ app.include_router(
     tags=["Business Plan"]
 )
 
-# --- 新規追加 ---
-
 # Auth ルーターのインクルード
-# ログイン・登録のエンドポイントなので、プレフィックスは不要か、短く設定することが多いです。
-# 例: /auth/register, /auth/token
+# ログイン・登録のエンドポイント
 app.include_router(
     auth.router,
-    prefix="/auth", # /auth/register, /auth/token など
+    prefix="/auth",
     tags=["Authentication"]
 )
 
 # Notifications ルーターのインクルード
 app.include_router(
     notifications.router,
-    prefix="/notifications", # /notifications/, /notifications/unread-count など
+    prefix="/notifications",
     tags=["Notifications"]
 )
 
 # PoC Plans ルーターのインクルード
 app.include_router(
     poc_plans.router,
-    prefix="/poc-plans", # /poc-plans/, /poc-plans/{id} など
+    prefix="/poc-plans",
     tags=["PoC Plan"]
 )
 
 # Users ルーターのインクルード
 app.include_router(
     users.router,
-    prefix="/users", # /users/me, /users/{id} など
+    prefix="/users",
     tags=["Users"]
 )
 
