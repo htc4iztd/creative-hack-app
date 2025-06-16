@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creative.hack Platform Demo</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+        .app-bar {
+            background-color: #1976d2;
+            color: white;
+            padding: 0 16px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+        .app-title {
+            font-size: 1.25rem;
+            font-weight: 500;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 84px auto 20px;
+            padding: 0 16px;
+        }
+        .page-title {
+            font-size: 2rem;
+            margin-bottom: 24px;
+            color: #333;
+        }
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 24px;
+        }
+        .card {
+            background-color: white;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .card-content {
+            padding: 16px;
+        }
+        .card-title {
+            font-size: 1.25rem;
+            margin: 0 0 8px;
+            color: #333;
+        }
+        .card-description {
+            color: #666;
+            margin: 0 0 16px;
+            font-size: 0.875rem;
+        }
+        .card-meta {
+            font-size: 0.75rem;
+            color: #999;
+            margin-bottom: 4px;
+        }
+        .card-actions {
+            padding: 8px 16px;
+            display: flex;
+            justify-content: flex-start;
+            border-top: 1px solid #eee;
+        }
+        .button {
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 8px 16px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            color: #1976d2;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        .button:hover {
+            background-color: rgba(25, 118, 210, 0.08);
+        }
+        .button-primary {
+            background-color: #1976d2;
+            color: white;
+        }
+        .button-primary:hover {
+            background-color: #1565c0;
+        }
+        .chip {
+            display: inline-flex;
+            align-items: center;
+            padding: 0 12px;
+            height: 24px;
+            font-size: 0.75rem;
+            border-radius: 12px;
+            background-color: #e0e0e0;
+            color: #333;
+            margin-left: 8px;
+        }
+        .chip-success {
+            background-color: #4caf50;
+            color: white;
+        }
+        .header-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+        .search-box {
+            width: 100%;
+            max-width: 500px;
+            padding: 8px 16px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+            margin-right: 16px;
+        }
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 24px;
+        }
+        .tab {
+            padding: 12px 24px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            font-weight: 500;
+        }
+        .tab.active {
+            border-bottom-color: #1976d2;
+            color: #1976d2;
+        }
+        .login-container {
+            max-width: 400px;
+            margin: 100px auto;
+            padding: 24px;
+            background-color: white;
+            border-radius: 4px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .form-field {
+            margin-bottom: 16px;
+        }
+        .form-field label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.875rem;
+            color: #666;
+        }
+        .form-field input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        .full-width {
+            width: 100%;
+        }
+        .text-center {
+            text-align: center;
+        }
+        .mt-4 {
+            margin-top: 24px;
+        }
+        .mb-2 {
+            margin-bottom: 16px;
+        }
+        .avatar {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background-color: #1976d2;
+            color: white;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            margin-right: 4px;
+        }
+        .avatar-group {
+            display: flex;
+        }
+        .team-info {
+            display: flex;
+            align-items: center;
+            margin-top: 8px;
+            font-size: 0.75rem;
+            color: #666;
+        }
+        .material-icons {
+            font-size: 18px;
+            margin-right: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-bar">
+        <div class="app-title">Creative.hack</div>
+        <div>
+            <span class="material-icons">notifications</span>
+            <span class="material-icons">account_circle</span>
+        </div>
+    </div>
+
+    <div class="container" id="login-page" style="display: none;">
+        <div class="login-container">
+            <h2 class="text-center mb-2">Creative.hack Platform</h2>
+            <h3 class="text-center mb-2">Sign In</h3>
+            
+            <form id="login-form">
+                <div class="form-field">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                <div class="form-field">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <button type="submit" class="button button-primary full-width mt-4">Sign In</button>
+            </form>
+            <p class="text-center mt-4">
+                <a href="#" onclick="showRegisterPage()">Don't have an account? Sign Up</a>
+            </p>
+        </div>
+    </div>
+
+    <div class="container" id="register-page" style="display: none;">
+        <div class="login-container">
+            <h2 class="text-center mb-2">Creative.hack Platform</h2>
+            <h3 class="text-center mb-2">Create an Account</h3>
+            
+            <form id="register-form">
+                <div class="form-field">
+                    <label for="full_name">Full Name</label>
+                    <input type="text" id="full_name" name="full_name" required>
+                </div>
+                <div class="form-field">
+                    <label for="reg-username">Username</label>
+                    <input type="text" id="reg-username" name="username" required>
+                </div>
+                <div class="form-field">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-field">
+                    <label for="department">Department</label>
+                    <input type="text" id="department" name="department" required>
+                </div>
+                <div class="form-field">
+                    <label for="division">Division</label>
+                    <input type="text" id="division" name="division" required>
+                </div>
+                <div class="form-field">
+                    <label for="reg-password">Password</label>
+                    <input type="password" id="reg-password" name="password" required>
+                </div>
+                <div class="form-field">
+                    <label for="confirm-password">Confirm Password</label>
+                    <input type="password" id="confirm-password" name="confirm-password" required>
+                </div>
+                <button type="submit" class="button button-primary full-width mt-4">Register</button>
+            </form>
+            <p class="text-center mt-4">
+                <a href="#" onclick="showLoginPage()">Already have an account? Sign In</a>
+            </p>
+        </div>
+    </div>
+
+    <div class="container" id="dashboard-page" style="display: none;">
+        <h1 class="page-title">Welcome to Creative.hack Platform</h1>
+        
+        <div class="card" style="margin-bottom: 24px; padding: 16px;">
+            <h3 style="margin-top: 0;"><span class="material-icons" style="vertical-align: middle;">announcement</span> Announcements</h3>
+            <hr>
+            <p>Welcome to the Creative.hack Platform! This platform is designed to facilitate KDDI's in-house ideathon and technical contest.</p>
+            <p>The first half of the year is dedicated to the Service Development Contest (Ideathon), where you can submit business plans and vote for the best ideas.</p>
+            <p>The second half focuses on the Technical Contest, where you can implement proof-of-concept (PoC) projects based on selected business plans or submit purely technical ideas.</p>
+        </div>
+
+        <div class="card-grid">
+            <div class="card">
+                <div class="card-content">
+                    <h3 class="card-title"><span class="material-icons" style="vertical-align: middle;">description</span> Business Plans</h3>
+                    <p class="card-description">Submit your business ideas, view other submissions, and vote for the best plans. Selected plans will move forward to the PoC phase.</p>
+                </div>
+                <div class="card-actions">
+                    <button class="button" onclick="showBusinessPlansPage()">View Business Plans</button>
+                    <button class="button">Submit New Plan</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-content">
+                    <h3 class="card-title"><span class="material-icons" style="vertical-align: middle;">code</span> PoC Plans</h3>
+                    <p class="card-description">Browse technical projects, join existing teams, or create your own technical proposal. Showcase your technical skills and innovation.</p>
+                </div>
+                <div class="card-actions">
+                    <button class="button" onclick="showPoCPlansPage()">View PoC Plans</button>
+                    <button class="button">Submit New PoC</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container" id="business-plans-page" style="display: none;">
+        <div class="header-actions">
+            <h1 class="page-title">Business Plans</h1>
+            <button class="button button-primary">
+                <span class="material-icons" style="vertical-align: middle; font-size: 18px; margin-right: 4px;">add</span>
+                Submit New Plan
+            </button>
+        </div>
+
+        <input type="text" class="search-box" placeholder="Search business plans...">
+
+        <div class="tabs">
+            <div class="tab active">All Plans</div>
+            <div class="tab">Selected Plans</div>
+            <div class="tab">Pending Plans</div>
+        </div>
+
+        <div class="card-grid">
+            <div class="card">
+                <div class="card-content">
+                    <div style="display: flex; justify-content: space-between;">
+                        <h3 class="card-title">AI-Powered Customer Service Platform</h3>
+                        <span class="chip chip-success">Selected</span>
+                    </div>
+                    <p class="card-description">A platform that uses AI to provide automated customer service responses, reducing response time and improving customer satisfaction.</p>
+                    <p class="card-meta">By Taro Yamada</p>
+                    <p class="card-meta">Submitted on 4/15/2023</p>
+                </div>
+                <div class="card-actions">
+                    <button class="button">View Details</button>
+                    <button class="button">
+                        <span class="material-icons" style="vertical-align: middle; font-size: 18px; margin-right: 4px;">thumb_up</span>
+                        Vote (15)
+                    </button>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-content">
+                    <h3 class="card-title">IoT Smart Office Solution</h3>
+                    <p class="card-description">An IoT solution that optimizes office space usage, energy consumption, and employee comfort through smart sensors and automation.</p>
+                    <p class="card-meta">By Hanako Suzuki</p>
+                    <p class="card-meta">Submitted on 4/16/2023</p>
+                </div>
+                <div class="card-actions">
+                    <button class="button">View Details</button>
+                    <button class="button">
+                        <span class="material-icons" style="vertical-align: middle; font-size: 18px; margin-right: 4px;">thumb_up</span>
+                        Vote (8)
+                    </button>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-content">
+                    <div style="display: flex; justify-content: space-between;">
+                        <h3 class="card-title">Blockchain-based Supply Chain Tracking</h3>
+                        <span class="chip chip-success">Selected</span>
+                    </div>
+                    <p class="card-description">A blockchain solution for tracking products throughout the supply chain, ensuring authenticity and transparency.</p>
+                    <p class="card-meta">By Kenji Tanaka</p>
+                    <p class="card-meta">Submitted on 4/14/2023</p>
+                </div>
+                <div class="card-actions">
+                    <button class="button">View Details</button>
+                    <button class="button">
+                        <span class="material-icons" style="vertical-align: middle; font-size: 18px; margin-right: 4px;">thumb_up</span>
+                        Vote (12)
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container" id="poc-plans-page" style="display: none;">
+        <div class="header-actions">
+            <h1 class="page-title">PoC Plans</h1>
+            <button class="button button-primary">
+                <span class="material-icons" style="vertical-align: middle; font-size: 18px; margin-right: 4px;">add</span>
+                Submit New PoC
+            </button>
+        </div>
+
+        <input type="text" class="search-box" placeholder="Search PoC plans...">
+
+        <div class="tabs">
+            <div class="tab active">All Plans</div>
+            <div class="tab">Business-related</div>
+            <div class="tab">Technical-only</div>
+        </div>
+
+        <div class="card-grid">
+            <div class="card">
+                <div class="card-content">
+                    <div style="display: flex; justify-content: space-between;">
+                        <h3 class="card-title">AI Customer Service Implementation</h3>
+                        <span class="chip">Business</span>
+                    </div>
+                    <p class="card-description">Implementing the AI-powered customer service platform using natural language processing and machine learning.</p>
+                    <p class="card-meta">Based on: AI-Powered Customer Service Platform</p>
+                    <p class="card-meta">By Taro Yamada</p>
+                    <p class="card-meta">Submitted on 7/10/2023</p>
+                    <div class="team-info">
+                        <span class="material-icons">group</span>
+                        Team (3):
+                        <div class="avatar-group">
+                            <div class="avatar">T</div>
+                            <div class="avatar">S</div>
+                            <div class="avatar">A</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-actions">
+                    <button class="button">View Details</button>
+                    <button class="button">
+                        <span class="material-icons" style="vertical-align: middle; font-size: 18px; margin-right: 4px;">group</span>
+                        Join Team
+                    </button>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-content">
+                    <div style="display: flex; justify-content: space-between;">
+                        <h3 class="card-title">Quantum Computing Algorithm Research</h3>
+                        <span class="chip" style="background-color: #dc004e; color: white;">Technical</span>
+                    </div>
+                    <p class="card-description">Research project to explore quantum computing algorithms for optimization problems in telecommunications.</p>
+                    <p class="card-meta">By Hiroshi Watanabe</p>
+                    <p class="card-meta">Submitted on 7/15/2023</p>
+                    <div class="team-info">
+                        <span class="material-icons">group</span>
+                        Team (1):
+                        <div class="avatar-group">
+                            <div class="avatar">H</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-actions">
+                    <button class="button">View Details</button>
+                    <button class="button">
+                        <span class="material-icons" style="vertical-align: middle; font-size: 18px; margin-right: 4px;">group</span>
+                        Join Team
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container" id="notifications-page" style="display: none;">
+        <h1 class="page-title">Notifications</h1>
+
+        <div style="display: flex; justify-content: flex-end; margin-bottom: 16px;">
+            <button class="button" style="margin-right: 8px;">
+                <span class="material-icons" style="vertical-align: middle; font-size: 18px; margin-right: 4px;">mark_email_read</span>
+                Mark All as Read
+            </button>
+            <button class="button" style="color: #f44336;">
+                <span class="material-icons" style="vertical-align: middle; font-size: 18px; margin-right: 4px;">delete</span>
+                Delete All
+            </button>
+        </div>
+
+        <div class="tabs">
+            <div class="tab active">All</div>
+            <div class="tab">Unread (2)</div>
+            <div class="tab">Read</div>
+        </div>
+
+        <div class="card" style="margin-bottom: 8px;">
+            <div class="card-content" style="padding: 16px; background-color: rgba(25, 118, 210, 0.08);">
+                <div style="display: flex; align-items: flex-start;">
+                    <span class="material-icons" style="margin-right: 16px; color: #1976d2;">thumb_up</span>
+                    <div>
+                        <h4 style="margin: 0 0 8px;">New Vote</h4>
+                        <p style="margin: 0 0 8px;">Kenji Tanaka voted for your business plan: AI-Powered Customer Service Platform</p>
+                        <p style="margin: 0; font-size: 0.75rem; color: #999;">4/20/2023, 10:30:00 AM</p>
+                    </div>
+                    <div style="margin-left: auto;">
+                        <span class="material-icons" style="cursor: pointer;">mark_email_read</span>
+                        <span class="material-icons" style="cursor: pointer; color: #f44336;">delete</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" style="margin-bottom: 8px;">
+            <div class="card-content" style="padding: 16px;">
+                <div style="display: flex; align-items: flex-start;">
+                    <span class="material-icons" style="margin-right: 16px; color: #4caf50;">check_circle</span>
+                    <div>
+                        <h4 style="margin: 0 0 8px;">Business Plan Selected</h4>
+                        <p style="margin: 0 0 8px;">Your business plan 'AI-Powered Customer Service Platform' has been selected for the next phase!</p>
+                        <p style="margin: 0; font-size: 0.75rem; color: #999;">5/1/2023, 2:20:00 PM</p>
+                    </div>
+                    <div style="margin-left: auto;">
+                        <span class="material-icons" style="cursor: pointer;">mark_email_unread</span>
+                        <span class="material-icons" style="cursor: pointer; color: #f44336;">delete</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" style="margin-bottom: 8px;">
+            <div class="card-content" style="padding: 16px; background-color: rgba(25, 118, 210, 0.08);">
+                <div style="display: flex; align-items: flex-start;">
+                    <span class="material-icons" style="margin-right: 16px; color: #dc004e;">group</span>
+                    <div>
+                        <h4 style="margin: 0 0 8px;">New Team Member</h4>
+                        <p style="margin: 0 0 8px;">Satoshi Ito joined your PoC team for: AI Customer Service Implementation</p>
+                        <p style="margin: 0; font-size: 0.75rem; color: #999;">7/12/2023, 9:15:00 AM</p>
+                    </div>
+                    <div style="margin-left: auto;">
+                        <span class="material-icons" style="cursor: pointer;">mark_email_read</span>
+                        <span class="material-icons" style="cursor: pointer; color: #f44336;">delete</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simple navigation functions
+        function showLoginPage() {
+            document.getElementById('login-page').style.display = 'block';
+            document.getElementById('register-page').style.display = 'none';
+            document.getElementById('dashboard-page').style.display = 'none';
+            document.getElementById('business-plans-page').style.display = 'none';
+            document.getElementById('poc-plans-page').style.display = 'none';
+            document.getElementById('notifications-page').style.display = 'none';
+        }
+
+        function showRegisterPage() {
+            document.getElementById('login-page').style.display = 'none';
+            document.getElementById('register-page').style.display = 'block';
+            document.getElementById('dashboard-page').style.display = 'none';
+            document.getElementById('business-plans-page').style.display = 'none';
+            document.getElementById('poc-plans-page').style.display = 'none';
+            document.getElementById('notifications-page').style.display = 'none';
+        }
+
+        function showDashboardPage() {
+            document.getElementById('login-page').style.display = 'none';
+            document.getElementById('register-page').style.display = 'none';
+            document.getElementById('dashboard-page').style.display = 'block';
+            document.getElementById('business-plans-page').style.display = 'none';
+            document.getElementById('poc-plans-page').style.display = 'none';
+            document.getElementById('notifications-page').style.display = 'none';
+        }
+
+        function showBusinessPlansPage() {
+            document.getElementById('login-page').style.display = 'none';
+            document.getElementById('register-page').style.display = 'none';
+            document.getElementById('dashboard-page').style.display = 'none';
+            document.getElementById('business-plans-page').style.display = 'block';
+            document.getElementById('poc-plans-page').style.display = 'none';
+            document.getElementById('notifications-page').style.display = 'none';
+        }
+
+        function showPoCPlansPage() {
+            document.getElementById('login-page').style.display = 'none';
+            document.getElementById('register-page').style.display = 'none';
+            document.getElementById('dashboard-page').style.display = 'none';
+            document.getElementById('business-plans-page').style.display = 'none';
+            document.getElementById('poc-plans-page').style.display = 'block';
+            document.getElementById('notifications-page').style.display = 'none';
+        }
+
+        function showNotificationsPage() {
+            document.getElementById('login-page').style.display = 'none';
+            document.getElementById('register-page').style.display = 'none';
+            document.getElementById('dashboard-page').style.display = 'none';
+            document.getElementById('business-plans-page').style.display = 'none';
+            document.getElementById('poc-plans-page').style.display = 'none';
+            document.getElementById('notifications-page').style.display = 'block';
+        }
+
+        // Form submission handlers
+        document.getElementById('login-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            // Simulate login
+            showDashboardPage();
+        });
+
+        document.getElementById('register-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            // Simulate registration
+            showLoginPage();
+        });
+
+        // Initialize with login page
+        showLoginPage();
+
+        // Add click handlers for app bar icons
+        document.querySelector('.app-bar .material-icons:first-child').addEventListener('click', function() {
+            showNotificationsPage();
+        });
+
+        document.querySelector('.app-bar .material-icons:last-child').addEventListener('click', function() {
+            showLoginPage();
+        });
+    </script>
+</body>
+</html>
