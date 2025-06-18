@@ -141,7 +141,6 @@ def read_business_plan(
     if business_plan is None:
         raise HTTPException(status_code=404, detail="Business plan not found")
     
-    # Add vote count
     business_plan.vote_count = db.query(Vote).filter(Vote.business_plan_id == business_plan.id).count()
     
     return business_plan
