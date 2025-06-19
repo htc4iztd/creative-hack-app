@@ -2,6 +2,7 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
-  "/business-plans/create": "pages/business-plans/create.js",
-  "/login": "pages/login.js"
+  "/poc-plans": "pages/poc-plans.js",
+  "/poc-plans/[id]": "pages/poc-plans/[id].js",
+  "/": "pages/index.js"
 }

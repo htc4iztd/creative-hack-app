@@ -208,8 +208,8 @@ export default function PoCPlans() {
       <Box mb={3}>
         <Tabs value={tabValue} onChange={handleTabChange} aria-label="poc plan tabs">
           <Tab label="すべてのプラン" />
-          <Tab label="ビジネス関連" />
-          <Tab label="技術のみ" />
+          <Tab label="ビジネスチャレンジからの引継ぎ案件" />
+          <Tab label="テックチャレンジ単体案件" />
         </Tabs>
       </Box>
 
@@ -224,7 +224,7 @@ export default function PoCPlans() {
                 <Tooltip title={plan.is_technical_only ? "技術のみのプロジェクト" : "ビジネス関連プロジェクト"}>
                   <Chip
                     icon={plan.is_technical_only ? <CodeIcon /> : <DescriptionIcon />}
-                    label={plan.is_technical_only ? "技術" : "ビジネス"}
+                    label={plan.is_technical_only ? "テック" : "ビジネス"}
                     color={plan.is_technical_only ? "secondary" : "primary"}
                     size="small"
                   />

@@ -1,0 +1,97 @@
+-- 既存の ENUM 型があれば削除
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM pg_type WHERE typname = 'userrole') THEN
+    DROP TYPE userrole;
+  END IF;
+END
+$$;
+
+-- ENUM 型の定義
+CREATE TYPE userrole AS ENUM ('user', 'admin');
+
+-- テーブル削除（依存関係を考慮して順番）
+DROP TABLE IF EXISTS notifications CASCADE;
+DROP TABLE IF EXISTS team_members CASCADE;
+DROP TABLE IF EXISTS poc_plans CASCADE;
+DROP TABLE IF EXISTS votes CASCADE;
+DROP TABLE IF EXISTS business_plans CASCADE;
+DROP TABLE IF EXISTS users CASCADE;
+
+-- users
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    email VARCHAR NOT NULL UNIQUE,
+    username VARCHAR NOT NULL UNIQUE,
+    hashed_password VARCHAR,
+    full_name VARCHAR,
+    department VARCHAR,
+    division VARCHAR,
+    role userrole DEFAULT 'user',
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMPTZ DEFAULT now(),
+    updated_at TIMESTAMPTZ
+);
+
+-- business_plans
+CREATE TABLE business_plans (
+    id SERIAL PRIMARY KEY,
+    title VARCHAR,
+    description TEXT,
+    problem_statement TEXT,
+    solution TEXT,
+    target_market TEXT,
+    business_model TEXT,
+    competition TEXT,
+    implementation_plan TEXT,
+    creator_id INTEGER REFERENCES users(id),
+    is_selected BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMPTZ DEFAULT now(),
+    updated_at TIMESTAMPTZ
+);
+
+-- votes
+CREATE TABLE votes (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id),
+    business_plan_id INTEGER REFERENCES business_plans(id),
+    created_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- poc_plans
+CREATE TABLE poc_plans (
+    id SERIAL PRIMARY KEY,
+    title VARCHAR,
+    description TEXT,
+    technical_requirements TEXT,
+    implementation_details TEXT,
+    timeline TEXT,
+    resources_needed TEXT,
+    expected_outcomes TEXT,
+    creator_id INTEGER REFERENCES users(id),
+    business_plan_id INTEGER REFERENCES business_plans(id),
+    is_technical_only BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMPTZ DEFAULT now(),
+    updated_at TIMESTAMPTZ
+);
+
+-- team_members
+CREATE TABLE team_members (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id),
+    poc_plan_id INTEGER REFERENCES poc_plans(id),
+    role VARCHAR,
+    created_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- notifications
+CREATE TABLE notifications (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id),
+    title VARCHAR,
+    message TEXT,
+    is_read BOOLEAN DEFAULT FALSE,
+    notification_type VARCHAR,
+    related_id INTEGER,
+    created_at TIMESTAMPTZ DEFAULT now()
+);
