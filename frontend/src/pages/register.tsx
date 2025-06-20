@@ -26,16 +26,27 @@ interface RegisterFormValues {
 }
 
 const departments = [
-  '事業開発',
-  'エンジニアリング',
-  'プロダクト管理',
-  'マーケティング',
-  '営業',
-  'カスタマーサポート',
-  '人事',
-  '財務',
-  '法務',
-  '運営',
+  'パーソナル事業戦略本部　AI事業戦略部',
+  'パーソナルシステム本部　ライブデザインプラットフォーム部',
+  'パーソナルシステム本部　アジャイル開発部',
+  'パーソナルシステム本部　プラットフォームビジネス部',
+  'パーソナルシステム本部　アプリケーション開発部',
+  'パーソナルシステム本部　アプリケーション開発部',
+  'パーソナルシステム本部　プロダクト開発部',
+  'パーソナルシステム本部　オペレーションサポート部',
+  '先端プラットフォーム開発本部　プラットフォームビジネス企画部',
+  '先端プラットフォーム開発本部　コミュニケーションプラットフォーム部',
+  '先端プラットフォーム開発本部　バリュープラットフォーム部',
+  '先端プラットフォーム開発本部　LXプラットフォーム部',
+  '先端プラットフォーム開発本部　エンゲージプラットフォーム部',
+  '情報システム本部　システム企画部',
+  '情報システム本部　基幹システム１部',
+  '情報システム本部　基幹システム２部',
+  '情報システム本部　基幹システム３部',
+  '情報システム本部　DXシステム１部',
+  '情報システム本部　DXシステム２部',
+  '情報システム本部　システムマネジメントサービス部',
+  '情報システム本部　スマートオフィスサービス部',
 ];
 
 const RegisterSchema = Yup.object().shape({
@@ -52,12 +63,9 @@ const RegisterSchema = Yup.object().shape({
   confirmPassword: Yup.string()
     .oneOf([Yup.ref('password')], 'パスワードが一致しません')
     .required('パスワード確認は必須です'),
-  full_name: Yup.string()
-    .required('氏名は必須です'),
-  department: Yup.string()
-    .required('部署は必須です'),
-  division: Yup.string()
-    .required('部門は必須です'),
+  full_name: Yup.string().required('氏名は必須です'),
+  department: Yup.string().required('部署は必須です'),
+  division: Yup.string().required('部門は必須です'),
 });
 
 export default function Register() {
@@ -80,30 +88,27 @@ export default function Register() {
   ) => {
     try {
       setError(null);
-      
-      // In a real app, this would be an API call
-      // const response = await fetch('/api/auth/register', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //   },
-      //   body: JSON.stringify({
-      //     username: values.username,
-      //     email: values.email,
-      //     password: values.password,
-      //     full_name: values.full_name,
-      //     department: values.department,
-      //     division: values.division,
-      //   }),
-      // });
-      
-      // For demo purposes, we'll just simulate a successful registration
-      // if (!response.ok) {
-      //   const errorData = await response.json();
-      //   throw new Error(errorData.detail || 'Registration failed');
-      // }
-      
-      // Redirect to login page after successful registration
+
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/register`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: values.username,
+          email: values.email,
+          password: values.password,
+          full_name: values.full_name,
+          department: values.department,
+          division: values.division,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || '登録に失敗しました');
+      }
+
       router.push('/login');
     } catch (err) {
       setError(err instanceof Error ? err.message : '登録に失敗しました');
@@ -114,14 +119,7 @@ export default function Register() {
 
   return (
     <Container component="main" maxWidth="sm">
-      <Box
-        sx={{
-          marginTop: 8,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-        }}
-      >
+      <Box sx={{ marginTop: 8, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
         <Paper elevation={3} sx={{ p: 4, width: '100%' }}>
           <Typography component="h1" variant="h5" align="center" gutterBottom>
             Creative.hackプラットフォーム
@@ -129,18 +127,14 @@ export default function Register() {
           <Typography component="h2" variant="h6" align="center" gutterBottom>
             アカウント作成
           </Typography>
-          
+
           {error && (
             <Alert severity="error" sx={{ mb: 2 }}>
               {error}
             </Alert>
           )}
-          
-          <Formik
-            initialValues={initialValues}
-            validationSchema={RegisterSchema}
-            onSubmit={handleSubmit}
-          >
+
+          <Formik initialValues={initialValues} validationSchema={RegisterSchema} onSubmit={handleSubmit}>
             {({ isSubmitting, errors, touched }) => (
               <Form>
                 <Grid container spacing={2}>
@@ -248,9 +242,7 @@ export default function Register() {
                 <Grid container justifyContent="flex-end">
                   <Grid item>
                     <Link href="/login">
-                      <Typography variant="body2">
-                        すでにアカウントをお持ちの方はログイン
-                      </Typography>
+                      <Typography variant="body2">すでにアカウントをお持ちの方はログイン</Typography>
                     </Link>
                   </Grid>
                 </Grid>

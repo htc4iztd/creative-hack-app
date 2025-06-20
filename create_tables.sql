@@ -17,6 +17,7 @@ DROP TABLE IF EXISTS poc_plans CASCADE;
 DROP TABLE IF EXISTS votes CASCADE;
 DROP TABLE IF EXISTS business_plans CASCADE;
 DROP TABLE IF EXISTS users CASCADE;
+DROP TABLE IF EXISTS password_reset_tokens;
 
 -- users
 CREATE TABLE users (
@@ -94,4 +95,13 @@ CREATE TABLE notifications (
     notification_type VARCHAR,
     related_id INTEGER,
     created_at TIMESTAMPTZ DEFAULT now()
+);
+
+--password_reset_tokens
+CREATE TABLE password_reset_tokens (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    token VARCHAR NOT NULL UNIQUE,
+    expires_at TIMESTAMPTZ NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT NOW()
 );

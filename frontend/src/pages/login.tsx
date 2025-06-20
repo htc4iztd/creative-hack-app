@@ -145,6 +145,14 @@ export default function Login() {
                       </Typography>
                     </Link>
                   </Grid>
+                  <Grid item xs>
+                    <Link href="/forgot-password">
+                      <Typography variant="body2">
+                        パスワードをお忘れですか？
+                      </Typography>
+                    </Link>
+                   </Grid>
+
                 </Grid>
               </Form>
             )}

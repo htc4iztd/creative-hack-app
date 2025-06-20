@@ -1,9 +1,9 @@
 from fastapi import FastAPI
 # 各ルーターファイルをインポート
 # プロジェクトの構造によって 'app.routers.auth' のようにパスを調整してください
-from .routers import business_plans, auth, notifications, poc_plans 
+from .routers import business_plans, notifications, poc_plans 
 from app.websocket_manager import manager
-
+from app import auth
 # Create the FastAPI app
 app = FastAPI(
     title="Creative.hack Platform",
