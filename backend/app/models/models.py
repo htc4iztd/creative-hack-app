@@ -22,6 +22,7 @@ class User(Base):
     division = Column(String)
     role = Column(Enum(UserRole), default=UserRole.USER)
     is_active = Column(Boolean, default=True)
+    is_email_verified = Column(Boolean, default=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
@@ -31,6 +32,9 @@ class User(Base):
     votes = relationship("Vote", back_populates="user")
     team_memberships = relationship("TeamMember", back_populates="user")
     notifications = relationship("Notification", back_populates="user")
+    sessions = relationship("UserSession", back_populates="user")
+    login_histories = relationship("UserLoginHistory", back_populates="user")
+    email_verification_tokens = relationship("EmailVerificationToken", back_populates="user")
 
 # Business Plan model
 class BusinessPlan(Base):
@@ -134,7 +138,7 @@ class PasswordResetToken(Base):
     # Relationships
     user = relationship("User", backref="password_reset_tokens")
 
-class SessionToken(Base):
+class UserSession(Base):
     __tablename__ = "user_sessions"
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
@@ -145,7 +149,7 @@ class SessionToken(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False)
 
-    user = relationship("User")  # Userモデル側とリレーション（必要に応じてback_populatesを使用）
+    user = relationship("User", back_populates="sessions")
 
 class UserLoginHistory(Base):
     __tablename__ = "user_login_history"
@@ -157,7 +161,7 @@ class UserLoginHistory(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False)
 
-    user = relationship("User")  # ユーザー側とリレーション
+    user = relationship("User", back_populates="login_histories")
 
 class EmailVerificationToken(Base):
     __tablename__ = "email_verification_tokens"
@@ -168,4 +172,4 @@ class EmailVerificationToken(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False)
 
-    user = relationship("User")  # ユーザーとリレーション
+    user = relationship("User", back_populates="email_verification_tokens")

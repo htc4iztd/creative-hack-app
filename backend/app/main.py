@@ -1,9 +1,11 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends, WebSocket, WebSocketDisconnect
 # 各ルーターファイルをインポート
 # プロジェクトの構造によって 'app.routers.auth' のようにパスを調整してください
-from .routers import business_plans, notifications, poc_plans 
+from .routers import business_plans, notifications, poc_plans,users
 from app.websocket_manager import manager
-from app import auth
+from app.auth import router as auth_router
+from app.auth_logic import get_current_active_user, get_current_admin_user
+from app.models.models import User
 # Create the FastAPI app
 app = FastAPI(
     title="Creative.hack Platform",
@@ -20,37 +22,38 @@ def health_check():
     return {"status": "healthy"}
 
 # Business Plans ルーターのインクルード（既存）
+# 修正後（OK）
 app.include_router(
-    business_plans.router,
-    prefix="/plans",
+    business_plans,  # `router = APIRouter()` をそのままインポートしてるなら `.router` は不要
+    prefix="/business_plans",
     tags=["Business Plan"]
 )
 
 # Auth ルーターのインクルード
 # ログイン・登録のエンドポイント
 app.include_router(
-    auth.router,
+    auth_router,
     prefix="/auth",
     tags=["Authentication"]
 )
 
 # Notifications ルーターのインクルード
 app.include_router(
-    notifications.router,
+    notifications,
     prefix="/notifications",
     tags=["Notifications"]
 )
 
 # PoC Plans ルーターのインクルード
 app.include_router(
-    poc_plans.router,
+    poc_plans,
     prefix="/poc-plans",
     tags=["PoC Plan"]
 )
 
 # Users ルーターのインクルード
 app.include_router(
-    users.router,
+    users,
     prefix="/users",
     tags=["Users"]
 )

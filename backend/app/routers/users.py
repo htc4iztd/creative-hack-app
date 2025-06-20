@@ -5,7 +5,7 @@ from typing import List, Any
 from app.database import get_db
 from app.models.models import User
 from app.schemas.schemas import UserResponse, UserUpdate, UserDetailResponse
-from app.auth import get_current_active_user, get_current_admin_user, get_password_hash
+from app.auth_logic import get_current_active_user, get_current_admin_user, get_password_hash
 
 router = APIRouter()
 

@@ -12,7 +12,7 @@ from app.schemas.schemas import (
     VoteCreate,
     VoteResponse
 )
-from app.auth import get_current_active_user, get_current_admin_user
+from app.auth_logic import get_current_active_user, get_current_admin_user
 from app.websocket_manager import manager
 import json
 import asyncio

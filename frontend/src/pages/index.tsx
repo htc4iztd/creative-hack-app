@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
+import Link from 'next/link';  // ← 追加
 import {
   Typography,
   Grid,
@@ -27,7 +28,7 @@ export default function Home() {
   }, [router]);
 
   if (!isAuthenticated) {
-    return null; // Will redirect to login
+    return null;
   }
 
   return (
@@ -68,12 +69,12 @@ export default function Home() {
               </Typography>
             </CardContent>
             <CardActions>
-              <Button size="small" component="a" href="/business_plans">
-                ビジネスプラン一覧
-              </Button>
-              <Button size="small" component="a" href="/business_plans/create">
-                新規プラン提出
-              </Button>
+              <Link href="/business_plans" passHref legacyBehavior>
+                <Button size="small" component="a">ビジネスプラン一覧</Button>
+              </Link>
+              <Link href="/business_plans/create" passHref legacyBehavior>
+                <Button size="small" component="a">新規プラン提出</Button>
+              </Link>
             </CardActions>
           </Card>
         </Grid>
@@ -90,12 +91,12 @@ export default function Home() {
               </Typography>
             </CardContent>
             <CardActions>
-              <Button size="small" component="a" href="/poc-plans">
-                PoCプラン一覧
-              </Button>
-              <Button size="small" component="a" href="/poc-plans/create">
-                新規PoC提出
-              </Button>
+              <Link href="/poc-plans" passHref legacyBehavior>
+                <Button size="small" component="a">PoCプラン一覧</Button>
+              </Link>
+              <Link href="/poc-plans/create" passHref legacyBehavior>
+                <Button size="small" component="a">新規PoC提出</Button>
+              </Link>
             </CardActions>
           </Card>
         </Grid>
