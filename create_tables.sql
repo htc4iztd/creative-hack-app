@@ -105,3 +105,38 @@ CREATE TABLE password_reset_tokens (
     expires_at TIMESTAMPTZ NOT NULL,
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
+
+-- セッション管理テーブル（user_sessions）の定義
+CREATE TABLE user_sessions (
+    id          SERIAL PRIMARY KEY,
+    user_id     INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    token       TEXT NOT NULL UNIQUE,
+    device_info TEXT,
+    ip_address  TEXT,
+    expires_at  TIMESTAMP WITH TIME ZONE NOT NULL,
+    created_at  TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+    updated_at  TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL
+);
+-- （必要に応じて）1ユーザー1セッションを強制するユニーク制約
+CREATE UNIQUE INDEX uq_user_sessions_user ON user_sessions(user_id);
+
+-- ログイン履歴管理テーブル（user_login_history）の定義
+CREATE TABLE user_login_history (
+    id         SERIAL PRIMARY KEY,
+    user_id    INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    ip_address TEXT,
+    user_agent TEXT,
+    login_at   TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL
+);
+
+-- メール確認トークン管理テーブル（email_verification_tokens）の定義
+CREATE TABLE email_verification_tokens (
+    id          SERIAL PRIMARY KEY,
+    user_id     INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    token       TEXT NOT NULL UNIQUE,
+    expires_at  TIMESTAMP WITH TIME ZONE NOT NULL,
+    created_at  TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+    updated_at  TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL
+);

@@ -133,3 +133,39 @@ class PasswordResetToken(Base):
 
     # Relationships
     user = relationship("User", backref="password_reset_tokens")
+
+class SessionToken(Base):
+    __tablename__ = "user_sessions"
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    token = Column(String, nullable=False, unique=True)
+    device_info = Column(String)
+    ip_address = Column(String)
+    expires_at = Column(DateTime(timezone=True), nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False)
+
+    user = relationship("User")  # Userモデル側とリレーション（必要に応じてback_populatesを使用）
+
+class UserLoginHistory(Base):
+    __tablename__ = "user_login_history"
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    ip_address = Column(String)
+    user_agent = Column(String)
+    login_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False)
+
+    user = relationship("User")  # ユーザー側とリレーション
+
+class EmailVerificationToken(Base):
+    __tablename__ = "email_verification_tokens"
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    token = Column(String, nullable=False, unique=True)
+    expires_at = Column(DateTime(timezone=True), nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False)
+
+    user = relationship("User")  # ユーザーとリレーション
