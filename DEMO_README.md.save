@@ -1,0 +1,97 @@
+# Creative.hack Platform Demo
+
+このリポジトリは、社内アイデアソン＆技術コンテスト運営用のWEBアプリケーションのデモです。
+
+## デモの使用方法
+
+このデモは、Next.jsとFastAPIを使用した本来のアプリケーションの機能を示すために作成されたシンプルなHTMLデモです。
+
+### デモの起動方法
+
+1. `creative-hack-app/demo.html` ファイルをブラウザで開きます。
+2. デモアプリケーションが表示されます。
+
+### デモの機能
+
+このデモでは、以下の機能をシミュレートしています：
+
+1. **ユーザー認証**
+   - ログイン画面でユーザー名とパスワードを入力してログインできます
+   - 新規ユーザー登録画面も利用可能です
+
+s テーブルの全件取得2. **ビジネスプラン管理** - ビジネスプランの一覧表示 - 
+   ビジネスプランへの投票 - 選定されたプランの確認
+SELECT * FROM votes; 3. **PoC（技術検証）プラン管理** - 技術検証プランの一覧表示 - 
+   チームへの参加
+-- poc_plans テーブルの全件取得 4. **通知機能** SELECT * FROM poc_plans; - 
+新しい投票、プラン選定、チームメンバー参加などの通知
+
+### 本番環境での実装
+-- team_members テーブルの全件取得 実際の本番環境では、以下のコンポーネントで構成されています： 
+SELECT * FROM team_members; 1. **バックエンド (FastAPI)**
+   - ユーザー認証 - データベース操作 - ビジネスプランとPoCプランの管理 - 通知システム -- 
+notifications テーブルの全件取得 2. **フロントエンド (Next.js)** SELECT * FROM notifications; - 
+ユーザーインターフェース
+   - 状態管理 - APIとの通信 -- password_reset_tokens テーブルの全件取得 SELECT * FROM 
+password_reset_tokens;## 本番環境のセットアップ方法
+
+本番環境をセットアップするには、以下の手順が必要です： -- user_sessions テーブルの全件取得 
+SELECT * FROM user_sessions;### 前提条件
+
+- Python 3.8以上 - Node.js 14以上 - npm または yarn - PostgreSQL -- user_login_history 
+テーブルの全件取得 SELECT * FROM user_login_history;### バックエンドのセットアップ
+
+1. バックエンドディレクトリに移動します： ``` cd creative-hack-app/backend ``` -- 
+email_verification_tokens テーブルの全件取得 2. 仮想環境を作成し、アクティベートします： SELECT 
+* FROM email_verification_tokens; ```
+   python -m venv venv
+   source venv/bin/activate  # Windowsの場合: venv\Scripts\activate
+   ```
+
+3. 依存関係をインストールします：
+   ```
+   pip install -r requirements.txt
+   ```
+
+4. データベースをセットアップします：
+   ```
+   alembic upgrade head
+   ```
+
+5. バックエンドサーバーを起動します：
+   ```
+   uvicorn app.main:app --reload
+   ```
+
+### フロントエンドのセットアップ
+
+1. フロントエンドディレクトリに移動します：
+   ```
+   cd creative-hack-app/frontend
+   ```
+
+2. 依存関係をインストールします：
+   ```
+   npm install
+   # または
+   yarn install
+   ```
+
+3. 開発サーバーを起動します：
+   ```
+   npm run dev
+   # または
+   yarn dev
+   ```
+
+4. ブラウザで http://localhost:3000 にアクセスします。
+
+## 開発者向け情報
+
+- バックエンドAPIは http://localhost:8000 で実行されます
+- Swagger UIドキュメントは http://localhost:8000/docs で確認できます
+- フロントエンドは http://localhost:3000 で実行されます
+
+## 注意事項
+
+このデモは実際のアプリケーションの機能を示すためのものであり、実際のデータの保存や処理は行いません。本番環境では、適切なデータベースとAPIを使用して、すべての機能が完全に実装されます。

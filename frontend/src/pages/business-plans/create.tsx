@@ -65,7 +65,7 @@ export default function CreateBusinessPlan() {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('/api/business-plans', {
+      const response = await fetch('/api/business-plans/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

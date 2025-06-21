@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/router';
-import Link from 'next/link';
+import NextLink from 'next/link';
+import MuiLink from '@mui/material/Link';
 import {
   Container,
   Box,
@@ -39,31 +40,37 @@ export default function Login() {
   ) => {
     try {
       setError(null);
-      
-      // In a real app, this would be an API call
-      // const response = await fetch('/api/auth/token', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/x-www-form-urlencoded',
-      //   },
-      //   body: new URLSearchParams({
-      //     username: values.username,
-      //     password: values.password,
-      //   }),
-      // });
-      
-      // For demo purposes, we'll just simulate a successful login
-      // if (!response.ok) {
-      //   const errorData = await response.json();
-      //   throw new Error(errorData.detail || 'Login failed');
-      // }
-      
-      // const data = await response.json();
-      // localStorage.setItem('token', data.access_token);
-      
-      // For demo, just store a dummy token
-      localStorage.setItem('token', 'dummy_token');
-      
+
+      const response = await fetch('/api/auth/token', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+          username: values.username,
+          password: values.password,
+        }),
+      });
+
+      const text = await response.text();
+
+      if (!response.ok) {
+        try {
+          const errorData = JSON.parse(text);
+          throw new Error(errorData.detail || 'ログインに失敗しました');
+        } catch {
+          throw new Error('ログインに失敗しました（不正なレスポンス）');
+        }
+      }
+
+      let data: any = {};
+      try {
+        data = JSON.parse(text);
+      } catch {
+        throw new Error('ログイン成功しましたが、レスポンスが不正です');
+      }
+
+      localStorage.setItem('token', data.access_token);
       router.push('/');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'ログインに失敗しました');
@@ -89,13 +96,13 @@ export default function Login() {
           <Typography component="h2" variant="h6" align="center" gutterBottom>
             ログイン
           </Typography>
-          
+
           {error && (
             <Alert severity="error" sx={{ mb: 2 }}>
               {error}
             </Alert>
           )}
-          
+
           <Formik
             initialValues={initialValues}
             validationSchema={LoginSchema}
@@ -137,22 +144,39 @@ export default function Login() {
                 >
                   ログイン
                 </Button>
-                <Grid container justifyContent="flex-end">
+                <Grid container spacing={1} direction="column" alignItems="flex-end">
                   <Grid item>
-                    <Link href="/register">
-                      <Typography variant="body2">
-                        {"アカウントをお持ちでない方は新規登録"}
-                      </Typography>
-                    </Link>
+                    <NextLink href="/register" passHref legacyBehavior>
+                      <MuiLink
+                        underline="none"
+                        sx={{
+                          color: 'text.secondary',
+                          '&:hover': {
+                            textDecoration: 'underline',
+                            color: 'primary.light',
+                          },
+                        }}
+                      >
+                        アカウントをお持ちでない方は新規登録
+                      </MuiLink>
+                    </NextLink>
                   </Grid>
-                  <Grid item xs>
-                    <Link href="/forgot-password">
-                      <Typography variant="body2">
+                  <Grid item>
+                    <NextLink href="/forgot-password" passHref legacyBehavior>
+                      <MuiLink
+                        underline="none"
+                        sx={{
+                          color: 'text.secondary',
+                          '&:hover': {
+                            textDecoration: 'underline',
+                            color: 'primary.light',
+                          },
+                        }}
+                      >
                         パスワードをお忘れですか？
-                      </Typography>
-                    </Link>
-                   </Grid>
-
+                      </MuiLink>
+                    </NextLink>
+                  </Grid>
                 </Grid>
               </Form>
             )}

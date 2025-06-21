@@ -69,10 +69,10 @@ export default function Home() {
               </Typography>
             </CardContent>
             <CardActions>
-              <Link href="/business_plans" passHref legacyBehavior>
+              <Link href="/business-plans" passHref legacyBehavior>
                 <Button size="small" component="a">ビジネスプラン一覧</Button>
               </Link>
-              <Link href="/business_plans/create" passHref legacyBehavior>
+              <Link href="/business-plans/create" passHref legacyBehavior>
                 <Button size="small" component="a">新規プラン提出</Button>
               </Link>
             </CardActions>
