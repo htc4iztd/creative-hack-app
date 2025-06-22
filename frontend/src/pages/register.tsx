@@ -22,7 +22,6 @@ interface RegisterFormValues {
   confirmPassword: string;
   full_name: string;
   department: string;
-  division: string;
 }
 
 const departments = [
@@ -65,7 +64,6 @@ const RegisterSchema = Yup.object().shape({
     .required('パスワード確認は必須です'),
   full_name: Yup.string().required('氏名は必須です'),
   department: Yup.string().required('部署は必須です'),
-  division: Yup.string().required('部門は必須です'),
 });
 
 export default function Register() {
@@ -79,7 +77,6 @@ export default function Register() {
     confirmPassword: '',
     full_name: '',
     department: '',
-    division: '',
   };
 
   const handleSubmit = async (
@@ -89,7 +86,7 @@ export default function Register() {
     try {
       setError(null);
 
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/register`, {
+      const response = await fetch('/api/auth/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -100,7 +97,7 @@ export default function Register() {
           password: values.password,
           full_name: values.full_name,
           department: values.department,
-          division: values.division,
+          role: "user",
         }),
       });
 
@@ -174,7 +171,7 @@ export default function Register() {
                       helperText={touched.email && errors.email}
                     />
                   </Grid>
-                  <Grid item xs={12} sm={6}>
+                  <Grid item xs={12}>
                     <Field
                       as={TextField}
                       fullWidth
@@ -191,17 +188,6 @@ export default function Register() {
                         </MenuItem>
                       ))}
                     </Field>
-                  </Grid>
-                  <Grid item xs={12} sm={6}>
-                    <Field
-                      as={TextField}
-                      fullWidth
-                      id="division"
-                      label="部門"
-                      name="division"
-                      error={touched.division && Boolean(errors.division)}
-                      helperText={touched.division && errors.division}
-                    />
                   </Grid>
                   <Grid item xs={12}>
                     <Field

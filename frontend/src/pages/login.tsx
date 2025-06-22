@@ -38,9 +38,13 @@ export default function Login() {
     values: LoginFormValues,
     { setSubmitting }: FormikHelpers<LoginFormValues>
   ) => {
+    console.log('[LOGIN] フォーム送信開始');
+    console.log('[LOGIN] 入力値:', values);
+
     try {
       setError(null);
 
+      console.log('[LOGIN] APIにリクエスト送信: /api/auth/token');
       const response = await fetch('/api/auth/token', {
         method: 'POST',
         headers: {
@@ -52,13 +56,18 @@ export default function Login() {
         }),
       });
 
+      console.log('[LOGIN] レスポンスステータス:', response.status);
+
       const text = await response.text();
+      console.log('[LOGIN] レスポンスボディ:', text);
 
       if (!response.ok) {
         try {
           const errorData = JSON.parse(text);
+          console.warn('[LOGIN] エラー詳細:', errorData);
           throw new Error(errorData.detail || 'ログインに失敗しました');
-        } catch {
+        } catch (jsonErr) {
+          console.error('[LOGIN] レスポンスJSON解析失敗:', jsonErr);
           throw new Error('ログインに失敗しました（不正なレスポンス）');
         }
       }
@@ -66,16 +75,27 @@ export default function Login() {
       let data: any = {};
       try {
         data = JSON.parse(text);
-      } catch {
+        console.log('[LOGIN] 成功レスポンス:', data);
+      } catch (parseErr) {
+        console.error('[LOGIN] JSON解析エラー:', parseErr);
         throw new Error('ログイン成功しましたが、レスポンスが不正です');
       }
 
+      if (!data.access_token) {
+        console.error('[LOGIN] access_tokenがレスポンスに存在しない');
+        throw new Error('ログインに成功しましたが、トークンが取得できませんでした');
+      }
+
       localStorage.setItem('token', data.access_token);
+      console.log('[LOGIN] トークンをlocalStorageに保存');
       router.push('/');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'ログインに失敗しました');
+      const msg = err instanceof Error ? err.message : 'ログインに失敗しました';
+      console.error('[LOGIN] 例外発生:', msg);
+      setError(msg);
     } finally {
       setSubmitting(false);
+      console.log('[LOGIN] フォーム送信完了');
     }
   };
 

@@ -6,7 +6,7 @@ import os
 # Database URL - PostgreSQL設定
 SQLALCHEMY_DATABASE_URL = os.getenv(
     "DATABASE_URL", 
-    "postgresql://postgres:postgres@localhost:5432/creative_hack"
+    "postgresql://postgres:postgres@localhost:5432/postgres"
 )
 
 # Create SQLAlchemy engine

@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Text, DateTime, Table, Enum
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Text, DateTime, Table, Enum as PgEnum
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 import enum
@@ -19,8 +19,7 @@ class User(Base):
     hashed_password = Column(String)
     full_name = Column(String)
     department = Column(String)
-    division = Column(String)
-    role = Column(Enum(UserRole), default=UserRole.USER)
+    role = Column(PgEnum("user", "admin", name="userrole", create_type=False), nullable=False)
     is_active = Column(Boolean, default=True)
     is_email_verified = Column(Boolean, default=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())

@@ -3,5 +3,7 @@
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
   "/login": "pages/login.js",
-  "/api/auth/token": "pages/api/auth/token.js"
+  "/api/auth/token": "pages/api/auth/token.js",
+  "/": "pages/index.js",
+  "/business-plans": "pages/business-plans.js"
 }

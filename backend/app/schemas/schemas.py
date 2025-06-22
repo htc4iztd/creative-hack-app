@@ -2,6 +2,7 @@ from pydantic import BaseModel, EmailStr, Field
 from typing import List, Optional, Union
 from datetime import datetime
 from enum import Enum
+from app.models.models import UserRole
 
 # User role enum
 class UserRole(str, Enum):
@@ -14,7 +15,6 @@ class UserBase(BaseModel):
     username: str
     full_name: str
     department: str
-    division: str
 
 class BusinessPlanBase(BaseModel):
     title: str
@@ -53,6 +53,7 @@ class NotificationBase(BaseModel):
 # Create schemas
 class UserCreate(UserBase):
     password: str
+    role: UserRole
 
 class BusinessPlanCreate(BusinessPlanBase):
     pass
