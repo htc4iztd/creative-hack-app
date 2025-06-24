@@ -35,7 +35,7 @@ interface LayoutProps {
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const router = useRouter();
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   const [notificationCount, setNotificationCount] = useState(0);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -62,7 +62,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           'Authorization': `Bearer ${token}`
         }
       });
-      
       if (response.ok) {
         const count = await response.json();
         setNotificationCount(count);
@@ -102,6 +101,11 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     return <>{children}</>;
   }
 
+  // ⏳ Loading state before token check finishes
+  if (isAuthenticated === null) {
+    return null; // or show <CircularProgress />
+  }
+
   const drawer = (
     <div>
       <Toolbar>
@@ -113,25 +117,19 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       <List>
         <Link href="/">
           <ListItem button>
-            <ListItemIcon>
-              <DashboardIcon />
-            </ListItemIcon>
+            <ListItemIcon><DashboardIcon /></ListItemIcon>
             <ListItemText primary="Dashboard" />
           </ListItem>
         </Link>
         <Link href="/business-plans">
           <ListItem button>
-            <ListItemIcon>
-              <DescriptionIcon />
-            </ListItemIcon>
+            <ListItemIcon><DescriptionIcon /></ListItemIcon>
             <ListItemText primary="Business Plans" />
           </ListItem>
         </Link>
         <Link href="/poc-plans">
           <ListItem button>
-            <ListItemIcon>
-              <CodeIcon />
-            </ListItemIcon>
+            <ListItemIcon><CodeIcon /></ListItemIcon>
             <ListItemText primary="PoC Plans" />
           </ListItem>
         </Link>
@@ -164,24 +162,14 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                   <NotificationsIcon />
                 </Badge>
               </IconButton>
-              <IconButton
-                edge="end"
-                aria-label="account of current user"
-                aria-haspopup="true"
-                onClick={handleProfileMenuOpen}
-                color="inherit"
-              >
+              <IconButton edge="end" aria-label="account" onClick={handleProfileMenuOpen} color="inherit">
                 <AccountCircleIcon />
               </IconButton>
             </>
           ) : (
             <>
-              <Button color="inherit" onClick={() => router.push('/login')}>
-                Login
-              </Button>
-              <Button color="inherit" onClick={() => router.push('/register')}>
-                Register
-              </Button>
+              <Button color="inherit" onClick={() => router.push('/login')}>Login</Button>
+              <Button color="inherit" onClick={() => router.push('/register')}>Register</Button>
             </>
           )}
         </Toolbar>
@@ -190,17 +178,10 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       {/* Profile Menu */}
       <Menu
         anchorEl={anchorEl}
-        anchorOrigin={{
-          vertical: 'top',
-          horizontal: 'right',
-        }}
-        keepMounted
-        transformOrigin={{
-          vertical: 'top',
-          horizontal: 'right',
-        }}
         open={Boolean(anchorEl)}
         onClose={handleMenuClose}
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
       >
         <MenuItem onClick={() => router.push('/profile')}>Profile</MenuItem>
         <MenuItem onClick={handleLogout}>Logout</MenuItem>
@@ -209,21 +190,12 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       {/* Notifications Menu */}
       <Menu
         anchorEl={notificationAnchorEl}
-        anchorOrigin={{
-          vertical: 'top',
-          horizontal: 'right',
-        }}
-        keepMounted
-        transformOrigin={{
-          vertical: 'top',
-          horizontal: 'right',
-        }}
         open={Boolean(notificationAnchorEl)}
         onClose={handleMenuClose}
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
       >
-        <MenuItem onClick={() => router.push('/notifications')}>
-          View All Notifications
-        </MenuItem>
+        <MenuItem onClick={() => router.push('/notifications')}>View All Notifications</MenuItem>
       </Menu>
 
       {isAuthenticated && (
@@ -231,12 +203,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           variant="temporary"
           open={drawerOpen}
           onClose={handleDrawerToggle}
-          ModalProps={{
-            keepMounted: true, // Better open performance on mobile
-          }}
-          sx={{
-            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: 240 },
-          }}
+          ModalProps={{ keepMounted: true }}
+          sx={{ '& .MuiDrawer-paper': { boxSizing: 'border-box', width: 240 } }}
         >
           {drawer}
         </Drawer>
@@ -249,7 +217,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           p: 3,
           width: '100%',
           minHeight: '100vh',
-          pt: { xs: 8, sm: 9 }, // Toolbar height + padding
+          pt: { xs: 8, sm: 9 },
         }}
       >
         <Container maxWidth="lg">{children}</Container>
