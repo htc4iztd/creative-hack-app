@@ -97,7 +97,7 @@ export default function CreateBusinessPlan() {
   return (
     <div>
       <Typography variant="h4" component="h1" gutterBottom className="page-title">
-        Submit New Business Plan
+        ビジネスプランの提出
       </Typography>
 
       <Paper elevation={3} sx={{ p: 4, mb: 4 }}>
@@ -108,11 +108,11 @@ export default function CreateBusinessPlan() {
                 required
                 fullWidth
                 label="Title"
-                name="title"
+                name="プラン名"
                 value={formData.title}
                 onChange={handleChange}
                 variant="outlined"
-                helperText="A concise and descriptive title for your business plan"
+                helperText="ビジネスプランのタイトルを記入しましょう"
               />
             </Grid>
 
@@ -127,7 +127,7 @@ export default function CreateBusinessPlan() {
                 value={formData.description}
                 onChange={handleChange}
                 variant="outlined"
-                helperText="A brief overview of your business plan"
+                helperText="あなたの企画案を通して達成したいことを記入しましょう"
               />
             </Grid>
 
@@ -142,7 +142,7 @@ export default function CreateBusinessPlan() {
                 value={formData.problem_statement}
                 onChange={handleChange}
                 variant="outlined"
-                helperText="Describe the problem your business plan aims to solve"
+                helperText="あなたの企画案が解決するビジネス課題を記入しましょう"
               />
             </Grid>
 
@@ -157,7 +157,7 @@ export default function CreateBusinessPlan() {
                 value={formData.solution}
                 onChange={handleChange}
                 variant="outlined"
-                helperText="Explain your proposed solution to the problem"
+                helperText="ビジネス課題に対してあなたが考える解決手法を記入しましょう"
               />
             </Grid>
 
@@ -172,7 +172,7 @@ export default function CreateBusinessPlan() {
                 value={formData.target_market}
                 onChange={handleChange}
                 variant="outlined"
-                helperText="Describe your target market and potential customers"
+                helperText="あなたの企画案の対象となるターゲット顧客や市場について記入しましょう"
               />
             </Grid>
 
@@ -187,7 +187,7 @@ export default function CreateBusinessPlan() {
                 value={formData.business_model}
                 onChange={handleChange}
                 variant="outlined"
-                helperText="Explain how your business will generate revenue"
+                helperText="あなたの企画案が実現する収益のモデルを説明しましょう"
               />
             </Grid>
 
@@ -202,7 +202,7 @@ export default function CreateBusinessPlan() {
                 value={formData.competition}
                 onChange={handleChange}
                 variant="outlined"
-                helperText="Analyze your competitors and your competitive advantage"
+                helperText="想定される競合ビジネスと、それに対するあなたの企画案の優位性を説明しましょう"
               />
             </Grid>
 
@@ -217,7 +217,7 @@ export default function CreateBusinessPlan() {
                 value={formData.implementation_plan}
                 onChange={handleChange}
                 variant="outlined"
-                helperText="Outline the steps needed to implement your business plan"
+                helperText="あなたの企画案を技術的に実装するための手法を（今わかっている範囲でよいので）記入しましょう"
               />
             </Grid>
 
