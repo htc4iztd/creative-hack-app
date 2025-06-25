@@ -1,3 +1,4 @@
+// src/pages/login.tsx
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import NextLink from 'next/link';
@@ -29,99 +30,60 @@ export default function Login() {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
 
-  const initialValues: LoginFormValues = {
-    username: '',
-    password: '',
-  };
+  const initialValues: LoginFormValues = { username: '', password: '' };
 
   const handleSubmit = async (
     values: LoginFormValues,
     { setSubmitting }: FormikHelpers<LoginFormValues>
   ) => {
-    console.log('[LOGIN] フォーム送信開始');
-    console.log('[LOGIN] 入力値:', values);
-
+    setError(null);
     try {
-      setError(null);
-
-      console.log('[LOGIN] APIにリクエスト送信: /api/auth/token');
       const response = await fetch('/api/auth/token', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: new URLSearchParams({
           username: values.username,
           password: values.password,
         }),
       });
 
-      console.log('[LOGIN] レスポンスステータス:', response.status);
-
       const text = await response.text();
-      console.log('[LOGIN] レスポンスボディ:', text);
-
       if (!response.ok) {
-        try {
-          const errorData = JSON.parse(text);
-          console.warn('[LOGIN] エラー詳細:', errorData);
-          throw new Error(errorData.detail || 'ログインに失敗しました');
-        } catch (jsonErr) {
-          console.error('[LOGIN] レスポンスJSON解析失敗:', jsonErr);
-          throw new Error('ログインに失敗しました（不正なレスポンス）');
-        }
+        const errData = JSON.parse(text);
+        throw new Error(errData.detail || 'ログインに失敗しました');
       }
 
-      let data: any = {};
-      try {
-        data = JSON.parse(text);
-        console.log('[LOGIN] 成功レスポンス:', data);
-      } catch (parseErr) {
-        console.error('[LOGIN] JSON解析エラー:', parseErr);
-        throw new Error('ログイン成功しましたが、レスポンスが不正です');
-      }
+      const data = JSON.parse(text);
+      const token = data.access_token;
+      if (!token) throw new Error('トークンが取得できませんでした');
 
-      if (!data.access_token) {
-        console.error('[LOGIN] access_tokenがレスポンスに存在しない');
-        throw new Error('ログインに成功しましたが、トークンが取得できませんでした');
-      }
+      // 1) localStorage にも保存
+      localStorage.setItem('token', token);
 
-      localStorage.setItem('token', data.access_token);
-      console.log('[LOGIN] トークンをlocalStorageに保存');
+      // 2) SSR 用に Cookie にも保存
+      //    有効期間を1時間(3600秒)にしてみます
+      document.cookie = `token=${token}; Path=/; Max-Age=3600; SameSite=Lax`;
+
       router.push('/');
     } catch (err) {
-      const msg = err instanceof Error ? err.message : 'ログインに失敗しました';
-      console.error('[LOGIN] 例外発生:', msg);
-      setError(msg);
+      setError(err instanceof Error ? err.message : 'ログインに失敗しました');
     } finally {
       setSubmitting(false);
-      console.log('[LOGIN] フォーム送信完了');
     }
   };
 
   return (
     <Container component="main" maxWidth="xs">
-      <Box
-        sx={{
-          marginTop: 8,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-        }}
-      >
+      <Box sx={{ mt: 8, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
         <Paper elevation={3} sx={{ p: 4, width: '100%' }}>
-          <Typography component="h1" variant="h5" align="center" gutterBottom>
+          <Typography h1 variant="h5" align="center" gutterBottom>
             Creative.hackプラットフォーム
           </Typography>
-          <Typography component="h2" variant="h6" align="center" gutterBottom>
+          <Typography h2 variant="h6" align="center" gutterBottom>
             ログイン
           </Typography>
 
-          {error && (
-            <Alert severity="error" sx={{ mb: 2 }}>
-              {error}
-            </Alert>
-          )}
+          {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
 
           <Formik
             initialValues={initialValues}
@@ -132,25 +94,20 @@ export default function Login() {
               <Form>
                 <Field
                   as={TextField}
-                  margin="normal"
-                  fullWidth
-                  id="username"
-                  label="ユーザー名"
                   name="username"
-                  autoComplete="username"
-                  autoFocus
+                  label="ユーザー名"
+                  fullWidth
+                  margin="normal"
                   error={touched.username && Boolean(errors.username)}
                   helperText={touched.username && errors.username}
                 />
                 <Field
                   as={TextField}
-                  margin="normal"
-                  fullWidth
                   name="password"
-                  label="パスワード"
                   type="password"
-                  id="password"
-                  autoComplete="current-password"
+                  label="パスワード"
+                  fullWidth
+                  margin="normal"
                   error={touched.password && Boolean(errors.password)}
                   helperText={touched.password && errors.password}
                 />
@@ -158,7 +115,6 @@ export default function Login() {
                   type="submit"
                   fullWidth
                   variant="contained"
-                  color="primary"
                   disabled={isSubmitting}
                   sx={{ mt: 3, mb: 2 }}
                 >
@@ -167,34 +123,12 @@ export default function Login() {
                 <Grid container spacing={1} direction="column" alignItems="flex-end">
                   <Grid item>
                     <NextLink href="/register" passHref legacyBehavior>
-                      <MuiLink
-                        underline="none"
-                        sx={{
-                          color: 'text.secondary',
-                          '&:hover': {
-                            textDecoration: 'underline',
-                            color: 'primary.light',
-                          },
-                        }}
-                      >
-                        アカウントをお持ちでない方は新規登録
-                      </MuiLink>
+                      <MuiLink underline="none">アカウントをお持ちでない方は新規登録</MuiLink>
                     </NextLink>
                   </Grid>
                   <Grid item>
                     <NextLink href="/forgot-password" passHref legacyBehavior>
-                      <MuiLink
-                        underline="none"
-                        sx={{
-                          color: 'text.secondary',
-                          '&:hover': {
-                            textDecoration: 'underline',
-                            color: 'primary.light',
-                          },
-                        }}
-                      >
-                        パスワードをお忘れですか？
-                      </MuiLink>
+                      <MuiLink underline="none">パスワードをお忘れですか？</MuiLink>
                     </NextLink>
                   </Grid>
                 </Grid>
