@@ -61,45 +61,41 @@ export default function BusinessPlanDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [hasVoted, setHasVoted] = useState(false);
+  const [voteLoading, setVoteLoading] = useState(false);
   const [voteSuccess, setVoteSuccess] = useState(false);
+  const [voteMessage, setVoteMessage] = useState('');
   const [isAdmin, setIsAdmin] = useState(false);
-  const [socket, setSocket] = useState<WebSocket | null>(null);
 
-  // 認証チェック
+  // 認証チェック（デモ用に isAdmin も true）
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) {
       router.push('/login');
     } else {
       setIsAuthenticated(true);
-      setIsAdmin(true); // デモ用。実際はユーザー情報から判定
+      setIsAdmin(true);
     }
   }, [router]);
 
-  // データ取得 & WebSocket 接続
+  // ビジネスプラン詳細 & 投票状態取得
   useEffect(() => {
     if (!isAuthenticated || !id) return;
-
-    const token = localStorage.getItem('token')!;
-    setLoading(true);
-    setError(null);
-
-    // 1. ビジネスプラン詳細取得
     (async () => {
+      setLoading(true);
+      setError(null);
+      const token = localStorage.getItem('token')!;
       try {
+        // 詳細取得
         const res = await fetch(`/api/business-plans/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (res.status === 401) {
           localStorage.removeItem('token');
-          router.push('/login');
-          return;
+          return router.push('/login');
         }
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
-
-        // ネストされた creator をフラット化
-        const detail: BusinessPlanDetail = {
+        setBusinessPlan({
           id: data.id,
           title: data.title,
           description: data.description,
@@ -116,49 +112,28 @@ export default function BusinessPlanDetail() {
           is_selected: data.is_selected,
           created_at: data.created_at,
           updated_at: data.updated_at,
-          comments: data.comments ?? [],  // API 側に comments がない場合は空配列
-        };
-        setBusinessPlan(detail);
-
-        // 2. 投票状況取得
+          comments: data.comments ?? [],
+        });
+        // 投票済みかチェック
         const voteRes = await fetch(`/api/business-plans/${id}/user-vote`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (voteRes.ok) {
           setHasVoted(await voteRes.json());
         }
-      } catch (err) {
-        console.error(err);
-        setError('ビジネスプランの取得に失敗しました');
+      } catch (e) {
+        console.error(e);
+        setError('データ取得に失敗しました');
       } finally {
         setLoading(false);
       }
     })();
-
-    // 3. WebSocket 接続（リアルタイム投票更新）
-    const ws = new WebSocket(`ws://localhost:8000/ws/business-plans/${id}`);
-    ws.onopen = () => console.log('WebSocket connected');
-    ws.onmessage = (evt) => {
-      const msg = JSON.parse(evt.data);
-      if (msg.type === 'vote_update' && businessPlan) {
-        setBusinessPlan({
-          ...businessPlan,
-          vote_count: msg.vote_count,
-        });
-      }
-    };
-    ws.onerror = (e) => console.error('WebSocket error:', e);
-    ws.onclose = () => console.log('WebSocket disconnected');
-    setSocket(ws);
-
-    return () => {
-      ws.close();
-    };
   }, [isAuthenticated, id]);
 
-  // 投票ハンドラ
+  // 投票／取消し処理
   const handleVote = async () => {
-    if (!businessPlan) return;
+    if (!businessPlan || voteLoading) return;
+    setVoteLoading(true);
     const token = localStorage.getItem('token')!;
     try {
       const method = hasVoted ? 'DELETE' : 'POST';
@@ -167,17 +142,19 @@ export default function BusinessPlanDetail() {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const didVote = !hasVoted;
       setBusinessPlan({
         ...businessPlan,
-        vote_count: hasVoted
-          ? businessPlan.vote_count - 1
-          : businessPlan.vote_count + 1,
+        vote_count: businessPlan.vote_count + (didVote ? 1 : -1),
       });
-      setHasVoted(!hasVoted);
+      setHasVoted(didVote);
+      setVoteMessage(didVote ? '投票しました' : '投票を取り消しました');
       setVoteSuccess(true);
-    } catch (err) {
-      console.error(err);
-      setError('投票に失敗しました');
+    } catch (e) {
+      console.error(e);
+      setError('投票処理に失敗しました');
+    } finally {
+      setVoteLoading(false);
     }
   };
 
@@ -188,7 +165,6 @@ export default function BusinessPlanDetail() {
       </Box>
     );
   }
-
   if (error) {
     return (
       <Box mt={4}>
@@ -196,24 +172,24 @@ export default function BusinessPlanDetail() {
       </Box>
     );
   }
-
   if (!businessPlan) {
     return (
       <Box mt={4}>
-        <Alert severity="error">Business plan not found</Alert>
+        <Alert severity="error">プランが見つかりません</Alert>
       </Box>
     );
   }
 
   return (
     <div>
+      {/* 上部ナビ */}
       <Box display="flex" alignItems="center" mb={3}>
         <Button
           startIcon={<ArrowBackIcon />}
           onClick={() => router.push('/business-plans')}
           sx={{ mr: 2 }}
         >
-          Back to Business Plans
+          Back
         </Button>
         <Typography variant="h4" sx={{ flexGrow: 1 }}>
           Business Plan Details
@@ -229,15 +205,16 @@ export default function BusinessPlanDetail() {
         )}
       </Box>
 
+      {/* プラン内容 */}
       <Paper elevation={3} sx={{ p: 4, mb: 4 }}>
-        <Box display="flex" justifyContent="space-between" alignItems="flex-start" mb={2}>
+        <Box display="flex" justifyContent="space-between" mb={2}>
           <Typography variant="h5">{businessPlan.title}</Typography>
           <Box>
             {businessPlan.is_selected && (
               <Chip
-                icon={<CheckCircleIcon />}
-                label="Selected for PoC"
+                label="選定済"
                 color="success"
+                icon={<CheckCircleIcon />}
                 sx={{ mr: 1 }}
               />
             )}
@@ -245,8 +222,9 @@ export default function BusinessPlanDetail() {
               variant={hasVoted ? 'outlined' : 'contained'}
               startIcon={<ThumbUpIcon />}
               onClick={handleVote}
+              disabled={voteLoading}
             >
-              {hasVoted ? 'Voted' : 'Vote'} ({businessPlan.vote_count})
+              {hasVoted ? '取消し' : '投票'} ({businessPlan.vote_count})
             </Button>
           </Box>
         </Box>
@@ -254,11 +232,11 @@ export default function BusinessPlanDetail() {
         <Box display="flex" alignItems="center" mb={3}>
           <PersonIcon fontSize="small" sx={{ mr: 1 }} />
           <Typography sx={{ mr: 3 }}>
-            {businessPlan.creator_name} ({businessPlan.department})
+            {businessPlan.creator_name}（{businessPlan.department}）
           </Typography>
           <CalendarTodayIcon fontSize="small" sx={{ mr: 1 }} />
           <Typography>
-            Submitted on {new Date(businessPlan.created_at).toLocaleDateString()}
+            提出日 {new Date(businessPlan.created_at).toLocaleDateString()}
           </Typography>
         </Box>
 
@@ -266,50 +244,54 @@ export default function BusinessPlanDetail() {
 
         <Grid container spacing={4}>
           <Grid item xs={12}>
-            <Typography variant="h6" gutterBottom>Description</Typography>
+            <Typography variant="h6">Description</Typography>
             <Typography paragraph>{businessPlan.description}</Typography>
           </Grid>
           <Grid item xs={12}>
-            <Typography variant="h6" gutterBottom>Problem Statement</Typography>
+            <Typography variant="h6">Problem Statement</Typography>
             <Typography paragraph>{businessPlan.problem_statement}</Typography>
           </Grid>
           <Grid item xs={12}>
-            <Typography variant="h6" gutterBottom>Solution</Typography>
+            <Typography variant="h6">Solution</Typography>
             <Typography paragraph>{businessPlan.solution}</Typography>
           </Grid>
           <Grid item xs={12} md={6}>
-            <Typography variant="h6" gutterBottom>Target Market</Typography>
+            <Typography variant="h6">Target Market</Typography>
             <Typography paragraph>{businessPlan.target_market}</Typography>
           </Grid>
           <Grid item xs={12} md={6}>
-            <Typography variant="h6" gutterBottom>Business Model</Typography>
+            <Typography variant="h6">Business Model</Typography>
             <Typography paragraph>{businessPlan.business_model}</Typography>
           </Grid>
           <Grid item xs={12}>
-            <Typography variant="h6" gutterBottom>Competition</Typography>
+            <Typography variant="h6">Competition</Typography>
             <Typography paragraph>{businessPlan.competition}</Typography>
           </Grid>
           <Grid item xs={12}>
-            <Typography variant="h6" gutterBottom>Implementation Plan</Typography>
+            <Typography variant="h6">Implementation Plan</Typography>
             <Typography paragraph>{businessPlan.implementation_plan}</Typography>
           </Grid>
         </Grid>
       </Paper>
 
+      {/* コメント一覧 */}
       <Typography variant="h6" gutterBottom>Comments</Typography>
       <Paper elevation={2} sx={{ mb: 4, p: 2 }}>
         <List>
           {businessPlan.comments.length > 0 ? (
-            businessPlan.comments.map((comment) => (
-              <ListItem key={comment.id} divider>
+            businessPlan.comments.map((c) => (
+              <ListItem key={c.id} divider>
                 <ListItemIcon><PersonIcon /></ListItemIcon>
                 <ListItemText
-                  primary={comment.user.full_name}
+                  primary={c.user.full_name}
                   secondary={
                     <>
-                      <Typography component="span" variant="body2">{comment.content}</Typography><br />
+                      <Typography component="span" variant="body2">
+                        {c.content}
+                      </Typography>
+                      <br />
                       <Typography component="span" variant="caption" color="text.secondary">
-                        {new Date(comment.created_at).toLocaleString()}
+                        {new Date(c.created_at).toLocaleString()}
                       </Typography>
                     </>
                   }
@@ -322,9 +304,10 @@ export default function BusinessPlanDetail() {
         </List>
       </Paper>
 
+      {/* 成功メッセージ */}
       <Snackbar open={voteSuccess} autoHideDuration={3000} onClose={() => setVoteSuccess(false)}>
         <Alert onClose={() => setVoteSuccess(false)} severity="success">
-          Vote submitted successfully!
+          {voteMessage}
         </Alert>
       </Snackbar>
     </div>

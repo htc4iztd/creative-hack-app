@@ -8,12 +8,19 @@ if [ "$init_db" = "y" ] || [ "$init_db" = "Y" ]; then
     cd ..
 fi
 
+read -p "Startup database? (y/n): " start_db
+if [ "$start_db" = "y" ] || [ "$start_db" = "Y" ]; then
+	echo "Startup database..."
+	sudo service postgresql start
+fi
+
 echo "Starting Backend Server..."
-cd backend && python run_server.py &
+source creative_hack/bin/activate
+cd backend && nohup python run_server.py &
 cd ..
 
 echo "Starting Frontend Server..."
-cd frontend && npm run dev &
+cd frontend && nohup npm run dev &
 
 echo "Development servers started!"
 echo "Backend: http://localhost:8000"

@@ -1,0 +1,74 @@
+
+> creative-hack-frontend@0.1.0 dev
+> next dev
+
+warn  - Port 3000 is in use, trying 3001 instead.
+ready - started server on 0.0.0.0:3001, url: http://localhost:3001
+[36minfo[39m  - Loaded env from /workspaces/creative-hack-app/frontend/.env.local
+[35mevent[39m - compiled client and server successfully in 18.8s (11698 modules)
+[36mwait[39m  - compiling / (client and server)...
+[35mevent[39m - compiled client and server successfully in 2.5s (11701 modules)
+[36mwait[39m  - compiling /login (client and server)...
+[35mevent[39m - compiled client and server successfully in 1521 ms (11834 modules)
+Warning: Received `true` for a non-boolean attribute `h1`.
+
+If you want to write it to the DOM, pass a string instead: h1="true" or h1={value.toString()}.
+    at h5
+    at /workspaces/creative-hack-app/frontend/node_modules/@emotion/react/dist/emotion-element-a1829a1e.cjs.js:66:25
+    at renderNodeDestructive (/workspaces/creative-hack-app/frontend/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at div
+    at /workspaces/creative-hack-app/frontend/node_modules/@emotion/react/dist/emotion-element-a1829a1e.cjs.js:66:25
+    at renderNodeDestructive (/workspaces/creative-hack-app/frontend/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at div
+    at /workspaces/creative-hack-app/frontend/node_modules/@emotion/react/dist/emotion-element-a1829a1e.cjs.js:66:25
+    at renderNodeDestructive (/workspaces/creative-hack-app/frontend/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at main
+    at /workspaces/creative-hack-app/frontend/node_modules/@emotion/react/dist/emotion-element-a1829a1e.cjs.js:66:25
+    at renderNodeDestructive (/workspaces/creative-hack-app/frontend/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at Login (webpack-internal:///./src/pages/login.tsx:35:74)
+    at Layout (webpack-internal:///./src/components/Layout.tsx:24:19)
+    at DefaultPropsProvider (/workspaces/creative-hack-app/frontend/node_modules/@mui/system/DefaultPropsProvider/DefaultPropsProvider.js:18:3)
+    at RtlProvider (/workspaces/creative-hack-app/frontend/node_modules/@mui/system/RtlProvider/index.js:19:7)
+    at ThemeProvider (/workspaces/creative-hack-app/frontend/node_modules/@mui/private-theming/node/ThemeProvider/ThemeProvider.js:39:5)
+    at ThemeProvider (/workspaces/creative-hack-app/frontend/node_modules/@mui/system/ThemeProvider/ThemeProvider.js:52:5)
+    at ThemeProvider (/workspaces/creative-hack-app/frontend/node_modules/@mui/material/node/styles/ThemeProvider.js:21:14)
+    at QueryClientProvider (/workspaces/creative-hack-app/frontend/node_modules/react-query/lib/react/QueryClientProvider.js:45:21)
+    at App (webpack-internal:///./src/pages/_app.tsx:53:16)
+    at StyleRegistry (/workspaces/creative-hack-app/frontend/node_modules/styled-jsx/dist/index/index.js:449:36)
+    at PathnameContextProviderAdapter (/workspaces/creative-hack-app/frontend/node_modules/next/dist/shared/lib/router/adapters.js:78:11)
+    at AppContainer (/workspaces/creative-hack-app/frontend/node_modules/next/dist/server/render.js:337:29)
+    at AppContainerWithIsomorphicFiberStructure (/workspaces/creative-hack-app/frontend/node_modules/next/dist/server/render.js:373:57)
+    at div
+    at Body (/workspaces/creative-hack-app/frontend/node_modules/next/dist/server/render.js:673:21)
+Warning: Received `true` for a non-boolean attribute `h2`.
+
+If you want to write it to the DOM, pass a string instead: h2="true" or h2={value.toString()}.
+    at h6
+    at /workspaces/creative-hack-app/frontend/node_modules/@emotion/react/dist/emotion-element-a1829a1e.cjs.js:66:25
+    at renderNodeDestructive (/workspaces/creative-hack-app/frontend/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at div
+    at /workspaces/creative-hack-app/frontend/node_modules/@emotion/react/dist/emotion-element-a1829a1e.cjs.js:66:25
+    at renderNodeDestructive (/workspaces/creative-hack-app/frontend/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at div
+    at /workspaces/creative-hack-app/frontend/node_modules/@emotion/react/dist/emotion-element-a1829a1e.cjs.js:66:25
+    at renderNodeDestructive (/workspaces/creative-hack-app/frontend/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at main
+    at /workspaces/creative-hack-app/frontend/node_modules/@emotion/react/dist/emotion-element-a1829a1e.cjs.js:66:25
+    at renderNodeDestructive (/workspaces/creative-hack-app/frontend/node_modules/react-dom/cjs/react-dom-server.browser.development.js:6076:14)
+    at Login (webpack-internal:///./src/pages/login.tsx:35:74)
+    at Layout (webpack-internal:///./src/components/Layout.tsx:24:19)
+    at DefaultPropsProvider (/workspaces/creative-hack-app/frontend/node_modules/@mui/system/DefaultPropsProvider/DefaultPropsProvider.js:18:3)
+    at RtlProvider (/workspaces/creative-hack-app/frontend/node_modules/@mui/system/RtlProvider/index.js:19:7)
+    at ThemeProvider (/workspaces/creative-hack-app/frontend/node_modules/@mui/private-theming/node/ThemeProvider/ThemeProvider.js:39:5)
+    at ThemeProvider (/workspaces/creative-hack-app/frontend/node_modules/@mui/system/ThemeProvider/ThemeProvider.js:52:5)
+    at ThemeProvider (/workspaces/creative-hack-app/frontend/node_modules/@mui/material/node/styles/ThemeProvider.js:21:14)
+    at QueryClientProvider (/workspaces/creative-hack-app/frontend/node_modules/react-query/lib/react/QueryClientProvider.js:45:21)
+    at App (webpack-internal:///./src/pages/_app.tsx:53:16)
+    at StyleRegistry (/workspaces/creative-hack-app/frontend/node_modules/styled-jsx/dist/index/index.js:449:36)
+    at PathnameContextProviderAdapter (/workspaces/creative-hack-app/frontend/node_modules/next/dist/shared/lib/router/adapters.js:78:11)
+    at AppContainer (/workspaces/creative-hack-app/frontend/node_modules/next/dist/server/render.js:337:29)
+    at AppContainerWithIsomorphicFiberStructure (/workspaces/creative-hack-app/frontend/node_modules/next/dist/server/render.js:373:57)
+    at div
+    at Body (/workspaces/creative-hack-app/frontend/node_modules/next/dist/server/render.js:673:21)
+[36mwait[39m  - compiling /_error (client and server)...
+[35mevent[39m - compiled client and server successfully in 1220 ms (11832 modules)

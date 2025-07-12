@@ -108,7 +108,7 @@ export default function CreateBusinessPlan() {
                 required
                 fullWidth
                 label="Title"
-                name="プラン名"
+                name="title"
                 value={formData.title}
                 onChange={handleChange}
                 variant="outlined"
